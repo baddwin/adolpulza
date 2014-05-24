@@ -1,0 +1,4 @@
+adolpulza
+=========
+
+Latihan Qt lagi
