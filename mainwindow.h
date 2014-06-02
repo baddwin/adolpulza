@@ -24,6 +24,10 @@ private slots:
     void simpan();
     void takjadi();
 
+    void on_actionAdd_triggered();
+
+    void on_actionDelete_triggered();
+
 private:
     Ui::MainWindow *ui;
     QSqlDatabase tabel;

@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QFileInfo>
+#include <QSettings>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -13,7 +14,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     tabel = QSqlDatabase::addDatabase("QSQLITE");
+
+    //QSettings tatanan(QSettings::IniFormat, QSettings::UserScope, "Baddwin", "AdolPulza");
+
+#ifdef Q_OS_WIN
     QString tabelFile = "D:/Develop/ProjeQt/AdolPulza/adolpulza.sqlite";
+#else
+    QString tabelFile = "/home/bedouin/Apps/projects/qt-latihan/AdolPulza/adolpulza.sqlite";
+#endif
+
     tabel.setDatabaseName(tabelFile);
 
     if(!tabel.open())
@@ -42,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
     model->setTable("laporan");
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     model->select();
+    //model->database().transaction();
 //    model->setHeaderData(0,Qt::Horizontal,tr("No"));
 //    model->setHeaderData(1,Qt::Horizontal,tr("Tanggal"));
 //    model->setHeaderData(2,Qt::Horizontal,tr("Nomer"));
@@ -105,4 +115,15 @@ void MainWindow::takjadi()
 {
     model->revertAll();
     ui->statusBar->showMessage("Tabel dikembalikan pada kondisi awal",5000);
+}
+
+void MainWindow::on_actionAdd_triggered()
+{
+    model->insertRow(model->rowCount());
+    model->setData(model->index(model->rowCount()+1,0),model->rowCount()+1);
+}
+
+void MainWindow::on_actionDelete_triggered()
+{
+    model->removeRow(ui->tableView->currentIndex().row());
 }
