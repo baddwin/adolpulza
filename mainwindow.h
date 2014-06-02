@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QtSql>
-#include <QSqlQueryModel>
+#include <QSqlTableModel>
 
 namespace Ui {
 class MainWindow;
@@ -19,14 +19,15 @@ public:
 
 private slots:
     void on_actionQuit_triggered();
-
     void on_actionAbout_Qt_triggered();
-
     void on_actionAbout_triggered();
+    void simpan();
+    void takjadi();
 
 private:
     Ui::MainWindow *ui;
     QSqlDatabase tabel;
+    QSqlTableModel *model;
 };
 
 #endif // MAINWINDOW_H

@@ -2,6 +2,9 @@
 #include "ui_mainwindow.h"
 #include <QDebug>
 #include <QMessageBox>
+#include <QFile>
+#include <QTextStream>
+#include <QFileInfo>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -10,8 +13,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     tabel = QSqlDatabase::addDatabase("QSQLITE");
-    QString tabelFile = "/home/bedouin/Apps/projects/qt-latihan/AdolPulza/adolpulza.sqlite";
+    QString tabelFile = "D:/Develop/ProjeQt/AdolPulza/adolpulza.sqlite";
     tabel.setDatabaseName(tabelFile);
+
+    if(!tabel.open())
+    {
+        ui->statusBar->showMessage(tabel.lastError().text());
+        //return 0;
+    }
+    else
+    {
+        ui->statusBar->showMessage("Tabel berhasil dibuka",3000);
+    }
 
     QFileInfo infoTabel(tabelFile);
     if(infoTabel.isFile())
@@ -25,28 +38,36 @@ MainWindow::MainWindow(QWidget *parent) :
         }
     }
 
-    QSqlTableModel *model = new QSqlTableModel(ui->tableView);
-
+    model = new QSqlTableModel(parent,tabel);
     model->setTable("laporan");
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
-    model->setHeaderData(0,Qt::Horizontal,tr("No"));
-    model->setHeaderData(1,Qt::Horizontal,tr("Tanggal"));
-    model->setHeaderData(2,Qt::Horizontal,tr("Nomer"));
-    model->setHeaderData(3,Qt::Horizontal,tr("Biaya"));
-    model->setHeaderData(4,Qt::Horizontal,tr("Keterangan"));
     model->select();
+//    model->setHeaderData(0,Qt::Horizontal,tr("No"));
+//    model->setHeaderData(1,Qt::Horizontal,tr("Tanggal"));
+//    model->setHeaderData(2,Qt::Horizontal,tr("Nomer"));
+//    model->setHeaderData(3,Qt::Horizontal,tr("Biaya"));
+//    model->setHeaderData(4,Qt::Horizontal,tr("Keterangan"));
     ui->tableView->setModel(model);
+
+    //coba dengan qsqlquerymodel
+//    QSqlQueryModel *model = new QSqlQueryModel(parent);
+//    model->setQuery("SELECT * FROM laporan",tabel);
+//    ui->tableView->setModel(model);
 
     ui->tableView->resizeColumnToContents(0);
     ui->tableView->setColumnWidth(1,100);
     ui->tableView->setColumnWidth(2,200);
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
-    ui->tableView->show();
+    //ui->tableView->show();
+
+    connect(ui->actionSave,SIGNAL(triggered()),this,SLOT(simpan()));
+    connect(ui->actionReset,SIGNAL(triggered()),this,SLOT(takjadi()));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    tabel.close();
 }
 
 void MainWindow::on_actionQuit_triggered()
@@ -66,4 +87,22 @@ void MainWindow::on_actionAbout_triggered()
     about->setText("Adol Pulza\n2014 Slamet Badwi");
     about->setIcon(QMessageBox::Information);
     about->exec();
+}
+
+void MainWindow::simpan()
+{
+    if(model->submitAll())
+    {
+        ui->statusBar->showMessage("Berhasil disimpan",10000);
+    }
+    else
+    {
+        ui->statusBar->showMessage("Tidak bisa menyimpan: "+tabel.lastError().text(),5000);
+    }
+}
+
+void MainWindow::takjadi()
+{
+    model->revertAll();
+    ui->statusBar->showMessage("Tabel dikembalikan pada kondisi awal",5000);
 }
