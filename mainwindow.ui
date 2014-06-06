@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Adol Pulza</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="apres.qrc">
+    <normaloff>:/icon-hi.png</normaloff>:/icon-hi.png</iconset>
+  </property>
   <property name="toolButtonStyle">
    <enum>Qt::ToolButtonFollowStyle</enum>
   </property>
@@ -134,6 +138,8 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="apres.qrc"/>
+ </resources>
  <connections/>
 </ui>

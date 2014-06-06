@@ -20,3 +20,6 @@ HEADERS  += mainwindow.h
 FORMS    += mainwindow.ui
 
 RC_FILE = icon.rc
+
+RESOURCES += \
+    apres.qrc
