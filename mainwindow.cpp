@@ -1,11 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QDebug>
+
 #include <QMessageBox>
 #include <QFile>
 #include <QTextStream>
 #include <QFileInfo>
 #include <QSettings>
+//#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -18,34 +19,37 @@ MainWindow::MainWindow(QWidget *parent) :
     //QSettings tatanan(QSettings::IniFormat, QSettings::UserScope, "Baddwin", "AdolPulza");
 
 #ifdef Q_OS_WIN
-    QString tabelFile = "D:/Develop/ProjeQt/adolpulsa/adolpulza.sqlite";
+    QString tabelFile = "adolpulza.sqlite";
 #else
-    QString tabelFile = "/home/bedouin/Projects/qt-latihan/AdolPulza/adolpulza.sqlite";
+    QString tabelFile = "adolpulza.sqlite";
 #endif
 
-    tabel.setDatabaseName(tabelFile);
-
-    if(!tabel.open())
+    QFileInfo infoTabel(tabelFile);
+    if(infoTabel.exists())
     {
-        ui->statusBar->showMessage(tabel.lastError().text());
-        //return 0;
+        if(infoTabel.isFile())
+        {
+            tabel.setDatabaseName(tabelFile);
+            if(!tabel.open())
+            {
+                ui->statusBar->showMessage(tabel.lastError().text());
+                //return 0;
+            }
+            else
+            {
+                ui->statusBar->showMessage("Database berhasil dibuka",3000);
+            }
+            //qDebug() << "Database siap gan...";
+
+        }
     }
     else
     {
-        ui->statusBar->showMessage("Tabel berhasil dibuka",3000);
+        //qDebug() << "Ada kesalahan";
+        ui->statusBar->showMessage("File tidak ditemukan");
     }
 
-    QFileInfo infoTabel(tabelFile);
-    if(infoTabel.isFile())
-    {
-        if(tabel.open())
-        {
-            //qDebug() << "Database siap gan...";
 
-        }else{
-            //qDebug() << "Ada kesalahan";
-        }
-    }
 
     model = new QSqlTableModel(parent,tabel);
     model->setTable("laporan");
