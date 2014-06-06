@@ -18,9 +18,9 @@ MainWindow::MainWindow(QWidget *parent) :
     //QSettings tatanan(QSettings::IniFormat, QSettings::UserScope, "Baddwin", "AdolPulza");
 
 #ifdef Q_OS_WIN
-    QString tabelFile = "D:/Develop/ProjeQt/AdolPulza/adolpulza.sqlite";
+    QString tabelFile = "D:/Develop/ProjeQt/adolpulsa/adolpulza.sqlite";
 #else
-    QString tabelFile = "/home/bedouin/Apps/projects/qt-latihan/AdolPulza/adolpulza.sqlite";
+    QString tabelFile = "/home/bedouin/Projects/qt-latihan/AdolPulza/adolpulza.sqlite";
 #endif
 
     tabel.setDatabaseName(tabelFile);
@@ -68,6 +68,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableView->setColumnWidth(1,100);
     ui->tableView->setColumnWidth(2,200);
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
+    ui->tableView->verticalHeader()->hide();
     //ui->tableView->show();
 
     connect(ui->actionSave,SIGNAL(triggered()),this,SLOT(simpan()));
