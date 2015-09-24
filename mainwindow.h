@@ -1,5 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
+#include "delegate.h"
 
 #include <QMainWindow>
 #include <QtSql>
@@ -32,6 +33,7 @@ private:
     Ui::MainWindow *ui;
     QSqlDatabase tabel;
     QSqlTableModel *model;
+    Delegate *delegasi;
 };
 
 #endif // MAINWINDOW_H

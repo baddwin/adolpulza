@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     tabel = QSqlDatabase::addDatabase("QSQLITE");
 
     //QSettings tatanan(QSettings::IniFormat, QSettings::UserScope, "Baddwin", "AdolPulza");
+    delegasi = new Delegate(parent);
 
 #ifdef Q_OS_WIN
     QString tabelFile = "adolpulza.sqlite";
@@ -25,54 +26,38 @@ MainWindow::MainWindow(QWidget *parent) :
 #endif
 
     QFileInfo infoTabel(tabelFile);
-    if(infoTabel.exists())
-    {
-        if(infoTabel.isFile())
-        {
+    if(infoTabel.exists()) {
+        if(infoTabel.isFile()) {
             tabel.setDatabaseName(tabelFile);
             if(!tabel.open())
             {
                 ui->statusBar->showMessage(tabel.lastError().text());
                 //return 0;
-            }
-            else
-            {
+            } else {
                 ui->statusBar->showMessage("Database berhasil dibuka",3000);
             }
             //qDebug() << "Database siap gan...";
 
         }
-    }
-    else
-    {
+    } else {
         //qDebug() << "Ada kesalahan";
         ui->statusBar->showMessage("File tidak ditemukan");
+        return;
     }
-
-
 
     model = new QSqlTableModel(parent,tabel);
     model->setTable("laporan");
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     model->select();
     //model->database().transaction();
-//    model->setHeaderData(0,Qt::Horizontal,tr("No"));
-//    model->setHeaderData(1,Qt::Horizontal,tr("Tanggal"));
-//    model->setHeaderData(2,Qt::Horizontal,tr("Nomer"));
-//    model->setHeaderData(3,Qt::Horizontal,tr("Biaya"));
-//    model->setHeaderData(4,Qt::Horizontal,tr("Keterangan"));
     ui->tableView->setModel(model);
-
-    //coba dengan qsqlquerymodel
-//    QSqlQueryModel *model = new QSqlQueryModel(parent);
-//    model->setQuery("SELECT * FROM laporan",tabel);
-//    ui->tableView->setModel(model);
 
     ui->tableView->resizeColumnToContents(0);
     ui->tableView->setColumnWidth(1,100);
     ui->tableView->setColumnWidth(2,200);
-    ui->tableView->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableView->horizontalHeader()->setStretchLastSection(true);
     ui->tableView->verticalHeader()->hide();
+    ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //ui->tableView->show();
 
     connect(ui->actionSave,SIGNAL(triggered()),this,SLOT(simpan()));
@@ -81,8 +66,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+    delete delegasi;
     tabel.close();
+    delete ui;
 }
 
 void MainWindow::on_actionQuit_triggered()
@@ -97,11 +83,7 @@ void MainWindow::on_actionAbout_Qt_triggered()
 
 void MainWindow::on_actionAbout_triggered()
 {
-    QMessageBox *about = new QMessageBox(this);
-    about->setWindowTitle("Tentang Program");
-    about->setText("Adol Pulza\n2014 Slamet Badwi");
-    about->setIcon(QMessageBox::Information);
-    about->exec();
+    QMessageBox::about(this,"Tentang Program","Adol Pulza\n2015 Slamet Badwi");
 }
 
 void MainWindow::simpan()
@@ -124,8 +106,9 @@ void MainWindow::takjadi()
 
 void MainWindow::on_actionAdd_triggered()
 {
-    model->insertRow(model->rowCount());
-    model->setData(model->index(model->rowCount()+1,0),model->rowCount()+1);
+//    model->insertRow(model->rowCount());
+//    model->setData(model->index(model->rowCount()+1,0),model->rowCount()+1);
+    delegasi->exec();
 }
 
 void MainWindow::on_actionDelete_triggered()
