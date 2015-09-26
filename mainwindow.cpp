@@ -6,7 +6,7 @@
 #include <QTextStream>
 #include <QFileInfo>
 #include <QSettings>
-//#include <QDebug>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //QSettings tatanan(QSettings::IniFormat, QSettings::UserScope, "Baddwin", "AdolPulza");
     delegasi = new Delegate(parent);
+    connect(delegasi,SIGNAL(deleteRow()),this,SLOT(batal()));
 
 #ifdef Q_OS_WIN
     QString tabelFile = "adolpulza.sqlite";
@@ -59,6 +60,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableView->verticalHeader()->hide();
     ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //ui->tableView->show();
+
+    delegasi->petakan(model);
 
     connect(ui->actionSave,SIGNAL(triggered()),this,SLOT(simpan()));
     connect(ui->actionReset,SIGNAL(triggered()),this,SLOT(takjadi()));
@@ -106,12 +109,28 @@ void MainWindow::takjadi()
 
 void MainWindow::on_actionAdd_triggered()
 {
-//    model->insertRow(model->rowCount());
-//    model->setData(model->index(model->rowCount()+1,0),model->rowCount()+1);
+    //qDebug() << model->rowCount();
+    model->insertRow(model->rowCount());
+    model->setData(model->index(model->rowCount()+1,0),model->rowCount()+1);
+    ui->tableView->selectRow(model->rowCount());
+    delegasi->setIndeks(model->rowCount());
     delegasi->exec();
 }
 
 void MainWindow::on_actionDelete_triggered()
 {
+    qDebug() << "deleted" << ui->tableView->currentIndex().row();
     model->removeRow(ui->tableView->currentIndex().row());
+}
+
+void MainWindow::on_actionEdit_triggered()
+{
+    //delegasi->exec();
+    ui->tableView->update();
+}
+
+void MainWindow::batal()
+{
+//    qDebug() << model->rowCount();
+    model->removeRow(model->rowCount()-1);
 }

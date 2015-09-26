@@ -24,10 +24,13 @@ private slots:
     void on_actionAbout_triggered();
     void simpan();
     void takjadi();
+    void batal();
 
     void on_actionAdd_triggered();
 
     void on_actionDelete_triggered();
+
+    void on_actionEdit_triggered();
 
 private:
     Ui::MainWindow *ui;
